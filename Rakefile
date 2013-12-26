@@ -58,6 +58,7 @@ end
 task :console => "db:configure_connection" do
   Dir["./models/*.rb"].each {|file| require file}
   Dir["./models/ticket/*.rb"].each {|file| require file}
+  Dir["./models/user/*.rb"].each {|file| require file}
   ARGV.clear
   IRB.start
 end
