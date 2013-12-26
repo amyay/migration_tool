@@ -55,10 +55,22 @@ namespace :db do
   end
 end
 
-task :console => "db:configure_connection" do
+task :load_models => "db:configure_connection" do
   Dir["./models/*.rb"].each {|file| require file}
   Dir["./models/ticket/*.rb"].each {|file| require file}
   Dir["./models/user/*.rb"].each {|file| require file}
+  Dir["./models/importer/*.rb"].each {|file| require file}
+end
+
+namespace :import do
+  desc 'Importing users...'
+  task :users, [:users_csv] => :load_models do |t, args|
+    importer = Importer::User.new args.users_csv
+    importer.import
+  end
+end
+
+task :console => :load_models do
   ARGV.clear
   IRB.start
 end
