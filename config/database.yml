@@ -1,0 +1,5 @@
+development:
+  adapter: postgresql
+  database: medidata_dev
+  host: localhost
+  logger: false
