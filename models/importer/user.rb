@@ -5,10 +5,14 @@ class Importer::User < Importer
     @logger.debug "Importing users from #{@csv}"
     count = 0
     CSV.foreach(@csv, :headers=>true) do |row|
+      email = Formatter::Email.new row['Email Address']
+      name = Formatter::Name.new row['Full Name']
+      phone = Formatter::Phone.new row['Phone']
+
       user_class = self.class.role_to_user_class row['Role']
-      user = user_class.find_or_create_by_email row['Email Address']
-      user.name = row['Full Name']
-      user.phone = row['Phone']
+      user = user_class.find_or_create_by_email email.to_s
+      user.name = name.to_s
+      user.phone = phone.to_s
       user.save!
 
       count += 1

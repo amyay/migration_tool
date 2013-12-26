@@ -60,6 +60,7 @@ task :load_models => "db:configure_connection" do
   Dir["./models/ticket/*.rb"].each {|file| require file}
   Dir["./models/user/*.rb"].each {|file| require file}
   Dir["./models/importer/*.rb"].each {|file| require file}
+  Dir["./models/formatter/*.rb"].each {|file| require file}
 end
 
 namespace :import do
