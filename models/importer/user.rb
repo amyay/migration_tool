@@ -12,9 +12,9 @@ class Importer::User < Importer
     phone = Formatter::Phone.new row['Phone']
 
     user_class = role_to_user_class row['Role']
-    user = user_class.find_or_create_by_email email.to_s
-    user.name = name.to_s
-    user.phone = phone.to_s
+    user = user_class.find_or_create_by_email email.formatted
+    user.name = name.formatted
+    user.phone = phone.formatted
     user.save!
   end
 
