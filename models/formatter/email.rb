@@ -6,6 +6,6 @@ class Formatter::Email < Formatter
     temail = @raw_string.gsub ';', ','
     temail.gsub! /[*<(>)"\s\t]/, ''
     # temail.gsub! /\s/, ''
-    temail.split(',')[0]
+    temail.split(',')[0].downcase
   end
 end
