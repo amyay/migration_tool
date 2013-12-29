@@ -9,7 +9,7 @@ class Importer::User < Importer
       name = Formatter::Name.new row['Full Name']
       phone = Formatter::Phone.new row['Phone']
 
-      user_class = self.class.role_to_user_class row['Role']
+      user_class = role_to_user_class row['Role']
       user = user_class.find_or_create_by_email email.to_s
       user.name = name.to_s
       user.phone = phone.to_s
@@ -21,7 +21,8 @@ class Importer::User < Importer
     @logger.info "Processed #{count} users from #{@csv}"
   end
 
-  def self.role_to_user_class role
+private
+  def role_to_user_class role
     if role == 'End-User'
       return ::User
     elsif role == 'Staff'
