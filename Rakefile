@@ -65,10 +65,16 @@ end
 
 namespace :import do
   desc 'Importing users...'
-  task :users, [:users_csv] => :load_models do |t, args|
-    importer = Importer::User.new args.users_csv
+  task :users, [:csv] => :load_models do |t, args|
+    importer = Importer::User.new args.csv
     importer.import
   end
+
+  task :agents, [:csv] => :load_models do |t, args|
+    importer = Importer::Agent.new args.csv
+    importer.import
+  end
+
 end
 
 task :console => :load_models do
