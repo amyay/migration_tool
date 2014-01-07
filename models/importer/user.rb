@@ -2,7 +2,7 @@ require 'csv'
 
 class Importer::User < Importer
   def initialize csv
-    super
+    super csv
     @type = 'user'
   end
 
