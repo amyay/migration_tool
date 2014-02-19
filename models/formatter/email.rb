@@ -1,11 +1,24 @@
 class Formatter::Email < Formatter
   def formatted
-    if @raw_string.downcase == '(blank)'
-      return @raw_string.downcase
+    begin
+      temail = @raw_string.gsub ';', ','
+      temail.gsub! /[*<(>)"\s\t]/, ''
+      # temail.gsub! /\s/, ''
+      temail.split(',')[0].downcase
+    rescue
+      ""
     end
-    temail = @raw_string.gsub ';', ','
-    temail.gsub! /[*<(>)"\s\t]/, ''
-    # temail.gsub! /\s/, ''
-    temail.split(',')[0].downcase
+  end
+
+  def validate!(&block)
+    if !valid?
+      @logger.debug "Invalid email: #{formatted}, replaced with #{block.call}"
+      @raw_string = block.call
+    end
+  end
+
+  def valid?
+    temp = formatted
+    !temp.nil? && !temp.empty? && (temp!="blank")
   end
 end
