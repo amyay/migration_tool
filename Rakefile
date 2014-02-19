@@ -75,6 +75,11 @@ namespace :import do
     importer.import
   end
 
+  task :tickets, [:csv] => :load_models do |t, args|
+    importer = Importer::Ticket.new args.csv
+    importer.import
+  end
+
 end
 
 task :console => :load_models do
