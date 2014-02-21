@@ -1,6 +1,6 @@
 class Ticket < ActiveRecord::Base
   has_and_belongs_to_many :tags
-  has_many :ticket_comments
+  has_many :comments
   belongs_to :requester, class_name: "User"
   belongs_to :assignee, class_name: "User"
 
