@@ -80,6 +80,12 @@ namespace :import do
     importer.import
   end
 
+  task :comments, [:csv] => :load_models do |t, args|
+    importer = Importer::Comment.new args.csv
+    importer.import
+  end
+
+
 end
 
 task :console => :load_models do
