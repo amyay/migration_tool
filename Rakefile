@@ -60,6 +60,7 @@ task :load_models => "db:configure_connection" do
   Dir["./models/ticket/*.rb"].each {|file| require file}
   Dir["./models/user/*.rb"].each {|file| require file}
   Dir["./models/importer/*.rb"].each {|file| require file}
+  Dir["./models/exporter/*.rb"].each {|file| require file}
   Dir["./models/formatter/*.rb"].each {|file| require file}
 end
 
@@ -84,7 +85,13 @@ namespace :import do
     importer = Importer::Comment.new args.csv
     importer.import
   end
+end
 
+namespace :export do
+  task :tickets => :load_models do
+    exporter = Exporter::Ticket.new
+    exporter.export
+  end
 
 end
 
