@@ -7,10 +7,10 @@ class User < ActiveRecord::Base
   validates :name, presence: true
 
   # user must have valid email address
-  # validates :email, uniqueness: true
-  # validate :validate_email
+  validates :email, uniqueness: true
+  validate :validate_email
 
-  # before_validation :ensure_email_is_valid, on: :create
+  before_validation :ensure_email_is_valid, on: :create
 
   def name= name
     super
