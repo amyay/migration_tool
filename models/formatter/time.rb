@@ -10,6 +10,6 @@ class Formatter::Time < Formatter
     # Time.strptime(self,"%m/%d/%y %H:%M").strftime("%Y-%m-%d %T GMT-05:00")
     # Time.strptime(self,"%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %T GMT-05:00")
     # Time.strptime(@raw_string,"%m/%d/%y %H:%M").strftime("%Y-%m-%d %T GMT-05:00")
-    ::Time.strptime(@raw_string,"%m/%d/%Y").strftime("%Y-%m-%d")
+    ::Time.strptime(@raw_string,"%m/%d/%y").strftime("%Y-%m-%d")
   end
 end
