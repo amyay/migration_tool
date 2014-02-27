@@ -4,6 +4,9 @@ class Formatter::Quote < Formatter
   end
 
   def escaped
+    if @raw_string.nil?
+      return ''
+    end
     @raw_string.gsub '"', '\"'
   end
 end

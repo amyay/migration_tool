@@ -9,7 +9,7 @@ class Exporter
     @logger.debug "Exporting #{@type}s ..."
     count = 0
     if @csv.nil?
-      outfile = File.open("./output/#{@type}.csv", "wb")
+      outfile = File.open("./output/#{@type}s.csv", "wb")
     else
       outfile = File.open("#{@csv}", "wb")
     end

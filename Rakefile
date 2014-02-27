@@ -93,6 +93,16 @@ namespace :export do
     exporter.export
   end
 
+  task :comments, [:csv] => :load_models do |t, args|
+    exporter = Exporter::Comment.new args.csv
+    exporter.export
+  end
+
+  task :users, [:csv] => :load_models do |t, args|
+    exporter = Exporter::User.new args.csv
+    exporter.export
+  end
+
 end
 
 task :console => :load_models do
