@@ -88,8 +88,8 @@ namespace :import do
 end
 
 namespace :export do
-  task :tickets => :load_models do
-    exporter = Exporter::Ticket.new
+  task :tickets, [:csv] => :load_models do |t, args|
+    exporter = Exporter::Ticket.new args.csv
     exporter.export
   end
 

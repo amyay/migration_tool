@@ -1,5 +1,6 @@
 class Exporter
-  def initialize
+  def initialize csv
+    @csv = csv
     @logger = Logger.new STDOUT
     @type = ''
   end
@@ -7,7 +8,11 @@ class Exporter
   def export
     @logger.debug "Exporting #{@type}s ..."
     count = 0
-    outfile = File.open("./output/#{@type}.csv", "wb")
+    if @csv.nil?
+      outfile = File.open("./output/#{@type}.csv", "wb")
+    else
+      outfile = File.open("#{@csv}", "wb")
+    end
     outfile << export_header
     outfile << "\n"
     export_class.find_each do |item|
