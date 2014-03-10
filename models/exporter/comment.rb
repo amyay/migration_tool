@@ -3,7 +3,7 @@ require 'csv'
 class Exporter::Comment < Exporter
   def initialize csv
     super csv
-    @type = 'Ticket_Comments'
+    @type = 'Ticket_Comment'
   end
 
   def export_header
