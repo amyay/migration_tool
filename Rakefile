@@ -103,6 +103,18 @@ namespace :export do
     exporter.export
   end
 
+  task :group, [:csv] => :load_models do |t, args|
+    exporter = Exporter::Group.new args.csv
+    exporter.export
+  end
+
+  task :organization, [:csv] => :load_models do |t, args|
+    exporter = Exporter::Organization.new args.csv
+    exporter.export
+  end
+
+
+
 end
 
 task :console => :load_models do
