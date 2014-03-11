@@ -14,10 +14,18 @@ class Ticket < ActiveRecord::Base
   # make sure assignee must be present when status is solved or closed
   validate :validate_assignee
 
-  before_validation :ensure_requester_is_present, on: :create
-  before_validation :ensure_description_is_present, on: :create
-  before_validation :ensure_status_is_valid, on: :create
-  before_validation :ensure_assignee_is_present, on: :create
+  # before_save :ensure_requester_is_present
+
+  # before_validation :ensure_requester_is_present, on: :create
+  # before_validation :ensure_description_is_present, on: :create
+  # before_validation :ensure_status_is_valid, on: :create
+  # before_validation :ensure_assignee_is_present, on: :create
+
+  before_validation :ensure_requester_is_present
+  before_validation :ensure_description_is_present
+  before_validation :ensure_status_is_valid
+  before_validation :ensure_assignee_is_present
+
 
   protected
     def validate_status
@@ -38,7 +46,7 @@ class Ticket < ActiveRecord::Base
         # puts "aa debug in before_validation: requester is nil(?)"
         # puts self.requester.inspect
         # puts self.inspect
-        self.requester = User.find_or_create_by_email 'defaultrequester@migrationscript.com'
+        self.requester = User.find_or_create_by_email 'defaultrequester@legacyuser-tripadvisor.com'
         self.requester.name = "Default Requester"
         self.requester.save!
       end
@@ -58,7 +66,7 @@ class Ticket < ActiveRecord::Base
 
     def ensure_assignee_is_present
       if !assignee_present_for_closed_status?
-        self.assignee = User::Agent.find_or_create_by_email 'defaultagent@migrationscript.com'
+        self.assignee = User::Agent.find_or_create_by_email 'defaultagent@legacyuser-tripadvisor.com'
         self.assignee.name = "Default Agent"
         self.assignee.save!
       end

@@ -7,10 +7,11 @@ class User < ActiveRecord::Base
   validates :name, presence: true
 
   # user must have valid email address
-  validates :email, uniqueness: true
+  # validates :email, uniqueness: true
   validate :validate_email
 
-  before_validation :ensure_email_is_valid, on: :create
+  # before_validation :ensure_email_is_valid, on: :create
+  before_validation :ensure_name_is_present, on: :create
 
   def name= name
     super
@@ -35,6 +36,13 @@ class User < ActiveRecord::Base
         end
       end
     end
+
+    def ensure_name_is_present
+      if self.name.nil?
+        self.name = self.email
+      end
+    end
+
 
     def valid_email?
       return !(self.email =~ /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i).nil?
