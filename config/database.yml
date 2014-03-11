@@ -1,5 +1,5 @@
 development:
   adapter: postgresql
-  database: medidata_dev
+  database: tripadvisor_20140314
   host: localhost
   logger: false
