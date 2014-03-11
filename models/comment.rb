@@ -10,6 +10,7 @@ class Comment < ActiveRecord::Base
   validate :validate_public
 
   before_validation :ensure_private_comment_is_allowed, on: :create
+  before_validation :ensure_author_is_present, on: :create
 
   protected
     def validate_public
@@ -24,9 +25,17 @@ class Comment < ActiveRecord::Base
       if !is_public?
         if self.author.type != 'User::Agent'
           # if author is not agent
-          # for comment to be public
+          # force comment to be public
           self.is_public = true
         end
+      end
+    end
+
+    def ensure_author_is_present
+      if self.author.nil?
+        self.author = User::Agent.find_or_create_by_email 'defaultauthor@legacyuser-tripadvisor.com'
+        self.author.name = "Default Author"
+        self.author.save!
       end
     end
 
