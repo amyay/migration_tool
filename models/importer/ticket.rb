@@ -83,15 +83,15 @@ class Importer::Ticket < Importer
 
     ticket.save!
 
-    ticket.reload
-    if ticket.legacy_id=='06649813'
-      puts "***"
-      puts ticket.inspect
-      # ticket.legacy_id = nil
-      # ticket.save!
-      # puts "***"
-      # puts ticket.inspect
-    end
+    # ticket.reload
+    # if ticket.legacy_id=='06649813'
+    #   puts "***"
+    #   puts ticket.inspect
+    #   # ticket.legacy_id = nil
+    #   # ticket.save!
+    #   # puts "***"
+    #   # puts ticket.inspect
+    # end
     puts "bad validation for ticket #{ticket.legacy_id}" if ticket.requester_id.nil?
   end
 
