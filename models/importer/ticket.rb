@@ -73,7 +73,7 @@ class Importer::Ticket < Importer
 
     # custom fields, e.g. Old Ticket ID
     ticket.legacy_id = row['Ticket#']
-    ticket.queue = row['queue']
+    ticket.queue = (Formatter::Queue.new row['queue']).formatted
     ticket.emailed_to = row['Emailed To']
     ticket.userIP = row['UserIP']
     ticket.WEbagent = row['WEbagent']

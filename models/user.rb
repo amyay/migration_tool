@@ -45,6 +45,6 @@ class User < ActiveRecord::Base
 
 
     def valid_email?
-      return !(self.email =~ /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i).nil?
+      return !(self.email =~ /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,10}$/i).nil?
     end
 end
