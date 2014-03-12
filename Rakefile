@@ -11,6 +11,7 @@ namespace :db do
     ActiveRecord::Base.establish_connection config.merge('database' => nil)
     ActiveRecord::Base.connection.create_database config['database'], options
     ActiveRecord::Base.establish_connection config
+    ActiveRecord::Base.default_timezone = 'Eastern Time (US & Canada)'
   end
 
   task :environment do
@@ -110,6 +111,11 @@ namespace :export do
 
   task :organization, [:csv] => :load_models do |t, args|
     exporter = Exporter::Organization.new args.csv
+    exporter.export
+  end
+
+  task :special => :load_models do |t, args|
+    exporter = Special.new args.csv
     exporter.export
   end
 
