@@ -7,7 +7,8 @@ class Special
 
   def export
     @logger.debug "Exporting tickets and comments together ..."
-    batch_size = 20000
+    # batch_size = 20000
+    batch_size = 20
     count = 0
 
     ### loop thru all tickets ###
@@ -27,11 +28,12 @@ class Special
       innercount = 0
       # write individual ticket in within batchsize
       Ticket.offset(count*batch_size).limit(batch_size).each do |t|
+
         processed = true
         ticket_type = t.type.gsub 'Ticket::', ''
 
         ticket_quoted = Array.new
-          [t.id, t.subject, t.description, t.created_at, t.closed_at, t.requester_id, Group.find_by_id(t.group_id).name, t.assignee_id, ticket_type, t.status, t.priority, t.tag, t.queue, t.emailed_to, t.userIP, t.WEbagent, t.ReferrerURL, t.Webcookie, t.ThreadId].each do |element|
+          [t.id, t.subject, t.description, (Formatter::Time.new t.created_at).formatted, (Formatter::Time.new t.closed_at).formatted, t.requester_id, Group.find_by_id(t.group_id).name, t.assignee_id, ticket_type, t.status, t.priority, t.tag, t.queue, t.emailed_to, t.userIP, t.WEbagent, t.ReferrerURL, t.Webcookie, t.ThreadId].each do |element|
           ticket_quoted << (Formatter::Quote.new element).formatted
         end
         outfile_ticket << ticket_quoted.join(',')
@@ -40,7 +42,7 @@ class Special
         # write corresponding comment for this ticket
         t.comments.find_each do |c|
           comment_quoted = Array.new
-          [c.ticket_id, c.id, c.body, c.created_at, c.author_id, c.is_public].each do |element|
+          [c.ticket_id, c.id, c.body, (Formatter::Time.new c.created_at).formatted, c.author_id, c.is_public].each do |element|
             comment_quoted << (Formatter::Quote.new element).formatted
           end
           outfile_comment << comment_quoted.join(',')
@@ -50,12 +52,12 @@ class Special
         @logger.debug "Processed #{innercount} tickets." if innercount % 500 == 0
       end # end of processing tickets in within batchsize
 
-      # break if count == 10
+      @logger.debug "Processed #{innercount} tickets."
       @logger.info "Created ./output/Tickets_#{sprintf('%02d',count)}.csv"
       @logger.info "Created ./output/Ticket_Comments_#{sprintf('%02d',count)}.csv"
       count += 1
 
-      break if count == 5
+      break if count == 10
 
     end while processed
     # @logger.info "Processed ticketss and created two files"

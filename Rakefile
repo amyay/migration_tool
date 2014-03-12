@@ -11,7 +11,7 @@ namespace :db do
     ActiveRecord::Base.establish_connection config.merge('database' => nil)
     ActiveRecord::Base.connection.create_database config['database'], options
     ActiveRecord::Base.establish_connection config
-    ActiveRecord::Base.default_timezone = 'Eastern Time (US & Canada)'
+    # ActiveRecord::Base.default_timezone = 'Eastern Time (US & Canada)'
   end
 
   task :environment do
