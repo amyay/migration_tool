@@ -7,59 +7,73 @@ class Special
 
   def export
     @logger.debug "Exporting tickets and comments together ..."
-    # batch_size = 20000
-    batch_size = 20
+    batch_size = 5000
+    # batch_size = 5
+    filecount = 0
     count = 0
+    outfile_ticket = nil
+    outfile_comment = nil
 
     ### loop thru all tickets ###
-    begin
-      processed = false
+    # begin
+    Ticket.find_each do |t|
+      # processed = false
 
-      # open files #
-      outfile_ticket = File.open("./output/Tickets_#{sprintf('%02d',count)}.csv", "wb")
-      outfile_comment = File.open("./output/Ticket_Comments_#{sprintf('%02d',count)}.csv", "wb")
+      if (count % batch_size == 0)
+        # open files #
+        outfile_ticket = File.open("./output/Tickets_#{sprintf('%02d',filecount)}.csv", "wb")
+        outfile_comment = File.open("./output/Ticket_Comments_#{sprintf('%02d',filecount)}.csv", "wb")
 
-      outfile_ticket << (["Ticket #", "Subject", "Description", "Creation Date [yyyy-MM-dd z]", "Closure Date [yyyy-MM-dd z]", "Requester [id]", "Group", "Assignee [id]", "Type", "Status", "Priority", "Tags", "Queue[23779816]", "Emailed To[23683173]", "User IP[23721196]", "WEB agent[23690807]", "Referrer URL[23690817]", "Web cookie[23683183]", "Thread ID[23721206]"]).join(',')
-      outfile_ticket << "\n"
-
-      outfile_comment << (["Ticket #", "Ticket Comment #", "Comment", "Creation Date [yyyy-MM-dd z]", "Author [id]", "Public"]).join(',')
-      outfile_comment << "\n"
-
-      innercount = 0
-      # write individual ticket in within batchsize
-      Ticket.offset(count*batch_size).limit(batch_size).each do |t|
-
-        processed = true
-        ticket_type = t.type.gsub 'Ticket::', ''
-
-        ticket_quoted = Array.new
-          [t.id, t.subject, t.description, (Formatter::Time.new t.created_at).formatted, (Formatter::Time.new t.closed_at).formatted, t.requester_id, Group.find_by_id(t.group_id).name, t.assignee_id, ticket_type, t.status, t.priority, t.tag, t.queue, t.emailed_to, t.userIP, t.WEbagent, t.ReferrerURL, t.Webcookie, t.ThreadId].each do |element|
-          ticket_quoted << (Formatter::Quote.new element).formatted
-        end
-        outfile_ticket << ticket_quoted.join(',')
+        outfile_ticket << (["Ticket #", "Subject", "Description", "Creation Date [yyyy-MM-dd HH:mm:ss z]", "Closure Date [yyyy-MM-dd HH:mm:ss z]", "Requester [id]", "Group", "Assignee [id]", "Type", "Status", "Priority", "Tags", "Queue[23779816]", "Emailed To[23683173]", "User IP[23721196]", "WEB agent[23690807]", "Referrer URL[23690817]", "Web cookie[23683183]", "Thread ID[23721206]"]).join(',')
         outfile_ticket << "\n"
 
-        # write corresponding comment for this ticket
-        t.comments.find_each do |c|
-          comment_quoted = Array.new
-          [c.ticket_id, c.id, c.body, (Formatter::Time.new c.created_at).formatted, c.author_id, c.is_public].each do |element|
-            comment_quoted << (Formatter::Quote.new element).formatted
-          end
-          outfile_comment << comment_quoted.join(',')
-          outfile_comment << "\n"
+        outfile_comment << (["Ticket #", "Ticket Comment #", "Comment", "Creation Date [yyyy-MM-dd HH:mm:ss z]", "Author [id]", "Public"]).join(',')
+        outfile_comment << "\n"
+      end
+
+      # innercount = 0
+      # write individual ticket in within batchsize
+      # Ticket.offset(count*batch_size).limit(batch_size).each do |t|
+
+      # processed = true
+      ticket_type = t.type.gsub 'Ticket::', ''
+
+      ticket_quoted = Array.new
+        [t.id, t.subject, t.description, (Formatter::Time.new t.created_at).formatted, (Formatter::Time.new t.closed_at).formatted, t.requester_id, Group.find_by_id(t.group_id).name, t.assignee_id, ticket_type, t.status, t.priority, t.tag, t.queue, t.emailed_to, t.userIP, t.WEbagent, t.ReferrerURL, t.Webcookie, t.ThreadId].each do |element|
+        ticket_quoted << (Formatter::Quote.new element).formatted
+      end
+      outfile_ticket << ticket_quoted.join(',')
+      outfile_ticket << "\n"
+
+      # write corresponding comment for this ticket
+      t.comments.find_each do |c|
+        comment_quoted = Array.new
+        [c.ticket_id, c.id, c.body, (Formatter::Time.new c.created_at).formatted, c.author_id, c.is_public].each do |element|
+          comment_quoted << (Formatter::Quote.new element).formatted
         end
-        innercount += 1
-        @logger.debug "Processed #{innercount} tickets." if innercount % 500 == 0
-      end # end of processing tickets in within batchsize
+        outfile_comment << comment_quoted.join(',')
+        outfile_comment << "\n"
+      end
+      # innercount += 1
+      @logger.debug "Processed #{count} tickets." if count % 500 == 0
+      # end # end of processing tickets in within batchsize
 
-      @logger.debug "Processed #{innercount} tickets."
-      @logger.info "Created ./output/Tickets_#{sprintf('%02d',count)}.csv"
-      @logger.info "Created ./output/Ticket_Comments_#{sprintf('%02d',count)}.csv"
       count += 1
+      if (count % batch_size == 0)
+        @logger.debug "Processed #{count} tickets."
+        @logger.info "Created ./output/Tickets_#{sprintf('%02d',filecount)}.csv"
+        @logger.info "Created ./output/Ticket_Comments_#{sprintf('%02d',filecount)}.csv"
+        outfile_ticket.close
+        outfile_comment.close
+        filecount += 1
+      end
 
-      break if count == 10
+      # break if filecount == 10
+    end
 
-    end while processed
+      # break if count == 10
+
+    # end while processed
     # @logger.info "Processed ticketss and created two files"
   end
 
