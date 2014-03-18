@@ -1,5 +1,5 @@
 development:
   adapter: postgresql
-  database: tripadvisor_20140314
+  database: tripadvisor_20140314_new
   host: localhost
   logger: false
