@@ -104,12 +104,12 @@ namespace :export do
     exporter.export
   end
 
-  task :group, [:csv] => :load_models do |t, args|
+  task :groups, [:csv] => :load_models do |t, args|
     exporter = Exporter::Group.new args.csv
     exporter.export
   end
 
-  task :organization, [:csv] => :load_models do |t, args|
+  task :organizations, [:csv] => :load_models do |t, args|
     exporter = Exporter::Organization.new args.csv
     exporter.export
   end
@@ -119,6 +119,20 @@ namespace :export do
     exporter.export
   end
 
+  task :special2 => :load_models do |t, args|
+    exporter = Special2.new args.csv
+    exporter.export
+  end
+
+  task :special3 => :load_models do |t, args|
+    exporter = Special3.new args.csv
+    exporter.export
+  end
+
+  task :special4 => :load_models do |t, args|
+    exporter = Special4.new args.csv
+    exporter.export
+  end
 
 
 end
