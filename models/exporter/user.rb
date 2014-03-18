@@ -7,7 +7,7 @@ class Exporter::User < Exporter
   end
 
   def export_header
-    header_string = (["Name", "Email", "Password", "Phone", "Role", "Organization", "Tags", "Details", "Notes"]).join(',')
+    header_string = (["id", "Name", "Email", "Password", "Phone", "Role", "Organization", "Tags", "Details", "Notes"]).join(',')
     header_string
   end
 
@@ -19,7 +19,7 @@ class Exporter::User < Exporter
     end
 
     quoted = Array.new
-    [u.name, u.email, u.password, u.phone, user_type, u.organization, u.tag, u.details, u.notes].each do |element|
+    [u.id, u.name, u.email, u.password, u.phone, user_type, u.organization, u.tag, u.details, u.notes].each do |element|
         quoted << (Formatter::Quote.new element).formatted
       end
       quoted.join(',')
