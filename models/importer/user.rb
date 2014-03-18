@@ -16,18 +16,18 @@ class Importer::User < Importer
       made_up_address = "#{address}@#{domain}"
     end
 
-    # user_class = role_to_user_class row['Role']
-    # user = user_class.find_or_create_by_email email.formatted
-    user = ::User.find_or_create_by_email email.formatted
+    user_class = role_to_user_class row['Role']
+    user = user_class.find_or_create_by_email email.formatted
+    # user = ::User.find_or_create_by_email email.formatted
     user.name = name.formatted
     user.save!
   end
 
 private
   def role_to_user_class role
-    if role == 'End-User'
+    if role == 'end user'
       return ::User
-    elsif role == 'Staff'
+    elsif role == 'agent'
       return ::User::Agent
     else
       raise "Unknown role: #{role}"
