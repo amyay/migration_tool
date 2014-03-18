@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
 
   # user must have valid email address
   # validates :email, uniqueness: true
-  validate :validate_email
+  # validate :validate_email
 
   # before_validation :ensure_email_is_valid, on: :create
   before_validation :ensure_name_is_present, on: :create

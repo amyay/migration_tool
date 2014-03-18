@@ -7,10 +7,10 @@ class Comment < ActiveRecord::Base
   validates :is_public, :inclusion => {:in => [true, false]}
 
   # ticket comment can only be private if author is agent
-  validate :validate_public
+  # validate :validate_public
 
-  before_validation :ensure_private_comment_is_allowed, on: :create
-  before_validation :ensure_author_is_present, on: :create
+  # before_validation :ensure_private_comment_is_allowed, on: :create
+  # before_validation :ensure_author_is_present, on: :create
 
   protected
     def validate_public
