@@ -87,9 +87,11 @@ class Importer::Ticket < Importer
     # get ticket.closed_at depending on status
     # ticket.closed_at = (Formatter::Time.new row['Closure Date']).formatted if ticket.status.downcase == 'closed'
 
+    ticket.legacy_id = row['Ticket#']
+
     if row['Closure Date'].downcase == "null"
       ticket.closed_at = "null"
-      puts "invalid closure date for ticket with legaci ID #{ticket.legacy_id}.  setting it to null ..."
+      puts "invalid closure date for ticket with legacy ID #{ticket.legacy_id}.  setting it to null ..."
     else
       ticket.closed_at = (Formatter::Time.new row['Closure Date']).formatted if ticket.status.downcase == 'closed'
     end
@@ -102,7 +104,6 @@ class Importer::Ticket < Importer
 
 
     # custom fields, e.g. Old Ticket ID
-    ticket.legacy_id = row['Ticket#']
     ticket.queue = (Formatter::Queue.new row['queue']).formatted
     ticket.emailed_to = row['Emailed To']
     ticket.userIP = row['UserIP']
