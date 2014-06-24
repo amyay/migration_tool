@@ -79,9 +79,21 @@ class Importer::Ticket < Importer
     ticket.description = row['DESCRIPTION']
     ticket.created_at = (Formatter::Time.new row['Create Date']).formatted
     ticket.priority = (Formatter::Priority.new row['Priority']).formatted
-    ticket.status = row['Status']
+
+    # ticket.status = row['Status']
+    # HACK:  all tickets should have status "closed"
+    ticket.status = 'closed'
+
     # get ticket.closed_at depending on status
-    ticket.closed_at = (Formatter::Time.new row['Closure Date']).formatted if ticket.status.downcase == 'closed'
+    # ticket.closed_at = (Formatter::Time.new row['Closure Date']).formatted if ticket.status.downcase == 'closed'
+
+    if row['Closure Date'].downcase == "null"
+      ticket.closed_at = "null"
+      puts "invalid closure date for ticket with legaci ID #{ticket.legacy_id}.  setting it to null ..."
+    else
+      ticket.closed_at = (Formatter::Time.new row['Closure Date']).formatted if ticket.status.downcase == 'closed'
+    end
+
     ticket.group_id = Group.find_or_create_by_name(row['Group']).id
     # ticket.tag = row['Tags'] + ' legacy_tickets_2014_05_30'
     ticket.tag = 'legacy_tickets_2014_05_30'
