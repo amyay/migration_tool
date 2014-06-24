@@ -12,6 +12,8 @@ class Comment < ActiveRecord::Base
   # before_validation :ensure_private_comment_is_allowed, on: :create
   # before_validation :ensure_author_is_present, on: :create
 
+  before_validation :ensure_body_is_present
+
   protected
     def validate_public
       if !is_public?
@@ -41,5 +43,11 @@ class Comment < ActiveRecord::Base
 
     def is_public?
       self.is_public
+    end
+
+    def ensure_body_is_present
+      if body.nil? || body.blank?
+        self.body = '(blank)'
+      end
     end
 end
