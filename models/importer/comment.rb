@@ -8,7 +8,9 @@ class Importer::Comment < Importer
 
   def import_row row
     # first, make sure comment matches a valid ticket
-    ticket = ::Ticket.find_by_legacy_id row['Ticket#']
+    legacy_id = row['Ticket#'].sub(/^0/, "")
+
+    ticket = ::Ticket.find_by_legacy_id legacy_id
     if ticket.nil?
       # related ticket can't be found
       puts "did not import comnent ID " + row['TicketComment']
@@ -20,9 +22,19 @@ class Importer::Comment < Importer
     author_class = public_to_user_class row['Public']
 
     if row['Author'].include? '@'
+      # author contains email address
       author_email = (Formatter::Email.new row['Author']).formatted
       # author = ::User.find_or_create_by_email author_email
-      author = author_class.find_or_create_by_email author_email
+
+      # old method
+      # author = author_class.find_or_create_by_email author_email
+
+      # new method: change user type as necessary
+      author = ::User.find_or_create_by_email author_email
+      if !(is_it_public row['Public'])
+        author.type = "User::Agent"
+        author.save!
+      end
     else
       # author doesn't contain email address
       # check if there's anything there
@@ -30,7 +42,7 @@ class Importer::Comment < Importer
         # author contains something
         # try searching by name
         # author = ::User.find_by_name row['Author']
-        author = author_class.find_by_name row['Author']
+        author = ::User.find_by_name row['Author']
         if author.nil?
           # cannot find author
           # make up author
@@ -38,7 +50,7 @@ class Importer::Comment < Importer
           domain = "legacyuser-tripadvisor.com"
           made_up_email = "#{address}@#{domain}"
 
-          # depending if public is public or private, create end user or agent
+          # depending if comment is public or private, create end user or agent
           # author_class = public_to_user_class row['Public']
           author = author_class.find_or_create_by_email made_up_email
           author.name = row['Author']
@@ -53,6 +65,7 @@ class Importer::Comment < Importer
     comment.body = row['Comment']
     comment.is_public = is_it_public row['Public']
     comment.created_at = (Formatter::Time.new row['Creation Date']).formatted
+    comment.legacy_id = legacy_id
     comment.ticket = ticket
     comment.save!
   end

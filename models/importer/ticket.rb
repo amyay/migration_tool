@@ -11,22 +11,39 @@ class Importer::Ticket < Importer
     #### find assignee ####
     assignee = nil
     if row['Assignee'].include? '@'
+      # assignee field contains email address
       assignee_email = (Formatter::Email.new row['Assignee']).formatted
-      assignee = ::User::Agent.find_or_create_by_email assignee_email
+
+      # old method
+      # assignee = ::User::Agent.find_or_create_by_email assignee_email
+
+      # new method: change user type as necessary
+      assignee = ::User.find_or_create_by_email assignee_email
+      if assignee.type.nil?
+        assignee.type = "User::Agent"
+        assignee.save!
+      end
     else
       # Assignee field does not contain email address
       # check to see if Assignee field contains anything
       if !(row['Assignee'].nil? || row['Assignee'].empty?)
         # Assignee contains something
         # try searching by name
-        assignee = ::User::Agent.find_by_name row['Assignee']
+        assignee = ::User.find_by_name row['Assignee']
         if assignee.nil?
-          # cannot find assignee
+          # cannot find assignee in database
           # make up asignee
           address = row['Assignee'].gsub " ", "."
           domain = "legacyuser-tripadvisor.com"
           assignee_email = "#{address}@#{domain}"
           assignee = ::User::Agent.find_or_create_by_email assignee_email
+        else
+          # found user by name
+          # turn user into agent
+          if assignee.type.nil?
+            assignee.type = "User::Agent"
+            assignee.save!
+          end
         end
       end
     end
@@ -66,7 +83,8 @@ class Importer::Ticket < Importer
     # get ticket.closed_at depending on status
     ticket.closed_at = (Formatter::Time.new row['Closure Date']).formatted if ticket.status.downcase == 'closed'
     ticket.group_id = Group.find_or_create_by_name(row['Group']).id
-    ticket.tag = row['Tags'] + ' legacy_tickets_2014_03_14'
+    # ticket.tag = row['Tags'] + ' legacy_tickets_2014_05_30'
+    ticket.tag = 'legacy_tickets_2014_05_30'
     ticket.requester = requester
     ticket.assignee = assignee
 
