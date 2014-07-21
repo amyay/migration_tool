@@ -134,6 +134,15 @@ namespace :export do
     exporter.export
   end
 
+  task :special5 => :load_models do |t, args|
+    exporter = Special5.new args.csv
+    exporter.export
+  end
+
+  task :special6 => :load_models do |t, args|
+    exporter = Special6.new args.csv
+    exporter.export
+  end
 
 end
 
